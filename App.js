@@ -1,25 +1,38 @@
-import { StatusBar } from "expo-status-bar";
-//import { useState } from "react";
-import { StyleSheet, Text, View, TextInput, Button } from "react-native";
 import { useState } from "react";
+import { StyleSheet, View, FlatList } from "react-native";
+// import { ScrollView } from "react-native/types_generated/index";
+import GoalItem from "./components/GoalItem";
+import InputContainer from "./components/InputContainer";
 
 export default function App() {
-  // const [goalList, setGoalList] = useState([]);
+  const [goalList, setGoalList] = useState([]);
+
+  const appHandleAdd = (goalText) => {
+    setGoalList((goalList) => [
+      ...goalList,
+      { text: goalText, id: Math.random().toString() },
+    ]);
+  };
+
+  const handleDelete = (itemId) => {
+    // setGoalList((goalList) => goalList.filter((item) => item.id !== itemId));
+    console.log("delete");
+  };
 
   return (
     <View style={styles.appContainer}>
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.inputField}
-          placeholder="type goal"
-          placeholdrTextColor={"#fff"}
-        />
-        <View style={styles.buttonContainer}>
-          <Button title="add goal" />
-        </View>
-      </View>
+      <InputContainer onAddGoalProp={appHandleAdd} />
       <View style={styles.goalsContainer}>
-        <Text style={styles.listText}>List of goals...</Text>
+        <FlatList
+          data={goalList}
+          renderItem={(itemData) => {
+            return <GoalItem item={itemData.item} onDelete={handleDelete} />;
+          }}
+          keyExtractor={(item, index) => {
+            return item.id;
+          }}
+          alwaysBounceVertical={true}
+        ></FlatList>
       </View>
     </View>
   );
@@ -31,32 +44,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#000",
     justifyContent: "flex-start",
     alignItems: "center",
-    padding: 50,
-    color: "#fff",
-  },
-  inputContainer: {
-    flex: 1,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    borderColor: "#ff0000",
-    borderWidth: 2,
-    borderStyle: "solid",
-    alignItems: "center",
-  },
-  inputField: {
-    width: "60%",
-    borderWidth: 1,
-    borderColor: "red",
-    color: "#fff",
-  },
-  buttonContainer: {
-    minWidth: 80,
+    padding: 30,
   },
   goalsContainer: {
+    width: "100%",
     flex: 5,
-  },
-  listText: {
-    color: "#fff",
+    outlineColor: "#fff",
+    outlineWidth: 1,
   },
 });
